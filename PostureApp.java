@@ -21,10 +21,9 @@ public class PostureApp {
     private java.util.Timer frameRateTimer = new java.util.Timer();
     private JLabel frameRateTextArea = new JLabel();
     private JLabel background = new JLabel();
-    private JLabel histogramLabel = new JLabel();
-    private boolean histogramBool = true;
     private float scaleFloat = 1.5f;
     private float brightnessFloat = 20;
+    private Histogram histogram = new Histogram();
 
     public PostureApp() {
         // Set framerate timer to run every second
@@ -37,8 +36,6 @@ public class PostureApp {
         background.setBounds(0, 0, 640, 480);
         background.setLayout(null);
         background.add(frameRateTextArea);
-        background.add(histogramLabel);
-        new Histogram();
         imageGrabber.run();
         canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -48,10 +45,7 @@ public class PostureApp {
 //        img = imageUtilities.sharpen(img);
         img = imageUtilities.contrast(img, scaleFloat, brightnessFloat);
         background.setIcon(new ImageIcon(img));
-        if (histogramBool) {
-            histogramLabel.setText("<html>" + imageUtilities.getHistogram(img).replace("\n", "<br>") + "<html>");
-            histogramLabel.setBounds(20, 440 - (int) histogramLabel.getPreferredSize().getHeight(), (int) histogramLabel.getPreferredSize().getWidth(), (int) histogramLabel.getPreferredSize().getHeight());
-        }
+        histogram.drawHistogram(img);
 
         ++frameRate;
     }
@@ -77,6 +71,14 @@ public class PostureApp {
                 brightnessFloat -= 10;
             } else if (keyCode == event.VK_RIGHT) {
                 brightnessFloat += 10;
+            } else if (keyCode == event.VK_H) {
+                if (histogram.isVisible())
+                    histogram.hide();
+                else
+                    histogram.show();
+            } else if (keyCode == event.VK_R) {
+                scaleFloat = 1.5f;
+                brightnessFloat = 20;
             }
         }
     }
