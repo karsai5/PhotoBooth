@@ -14,6 +14,7 @@ public class Histogram {
         canvas.setLayout(null);
         canvas.add(histogramLabel);
         canvas.setFocusableWindowState(false);
+        canvas.setVisible(false);
     }
 
     public void drawHistogram(BufferedImage img) {

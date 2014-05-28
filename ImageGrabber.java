@@ -3,23 +3,19 @@
  */
 
 import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.OpenCVFrameGrabber;
 
-import javax.swing.*;
-
 import static org.bytedeco.javacpp.opencv_core.cvFlip;
 import static org.bytedeco.javacpp.opencv_highgui.cvSaveImage;
-import static org.bytedeco.javacpp.opencv_highgui.cvSetCaptureProperty;
 
 public class ImageGrabber implements Runnable {
 
-    private PostureApp postureApp;
+    private PhotoBooth photoBooth;
     opencv_core.IplImage image;
 
-    public ImageGrabber(PostureApp pa) {
-        postureApp = pa;
+    public ImageGrabber(PhotoBooth pa) {
+        photoBooth = pa;
     }
 
     @Override
@@ -41,8 +37,7 @@ public class ImageGrabber implements Runnable {
                     cvFlip(img, img, 1);
                     //cvSaveImage((i++) + "-capture.jpg", img);
                     //forward image to hook
-                    postureApp.imageGrabberHook(img.getBufferedImage());
-
+                    photoBooth.imageGrabberHook(img.getBufferedImage());
                 }
              }
         } catch (Exception e) {
