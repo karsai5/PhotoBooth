@@ -2,12 +2,15 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * Created by linuskarsai on 28/05/2014.
+ * Created by Linus Karsai (312070209) on 28/05/2014.
  */
 public class AndyWorhol implements Filter {
-    int threashold = -1;
-    int threasholdCount = 0;
+    int threshold = -1;
+    int thresholdCount = 0;
     @Override
+    /**
+     * Apply andy wohol filter effect
+     */
     public BufferedImage apply(BufferedImage img, Object[] options) {
         int threshold = findThreshold(img);
         Image toolkitImage = img.getScaledInstance(img.getWidth()/2,img.getHeight()/2, Image.SCALE_FAST);
@@ -59,9 +62,15 @@ public class AndyWorhol implements Filter {
         return tmp;
     }
 
+    /**
+     * Find threshold by calculating
+     * middle value from histogram
+     * @param img as input image
+     * @return luminosity value to use as threshold
+     */
     private int findThreshold(BufferedImage img) {
-        if (threasholdCount%14 == 0 || threashold < 0) {
-            this.threashold = 0;
+        if (thresholdCount%14 == 0 || threshold < 0) {
+            this.threshold = 0;
             int threshold = 0;
             int count = 0;
             double histogram[] = ImageUtilities.histogramArray(img);
@@ -79,8 +88,8 @@ public class AndyWorhol implements Filter {
             }
             return threshold;
         } else {
-            ++threasholdCount;
-            return threashold;
+            ++thresholdCount;
+            return threshold;
         }
     }
 }

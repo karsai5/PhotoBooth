@@ -1,5 +1,5 @@
 /**
- * Created by linuskarsai on 27/05/2014.
+ * Created by Linus Karsai (312070209) on 27/05/2014.
  */
 
 import org.bytedeco.javacpp.opencv_core;
@@ -19,6 +19,9 @@ public class ImageGrabber implements Runnable {
     }
 
     @Override
+    /**
+     * Grabs images from web-cam
+     */
     public void run() {
 
         FrameGrabber grabber = new OpenCVFrameGrabber(0);

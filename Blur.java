@@ -3,7 +3,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Kernel;
 
 /**
- * Created by linuskarsai on 28/05/2014.
+ * Created by Linus Karsai (312070209) on 28/05/2014.
  */
 public class Blur implements Filter {
     @Override

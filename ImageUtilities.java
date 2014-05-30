@@ -5,10 +5,16 @@ import java.awt.image.*;
 import java.nio.Buffer;
 
 /**
- * Created by linuskarsai on 27/05/2014.
+ * Created by Linus Karsai (312070209) on 27/05/2014.
  */
 public class ImageUtilities {
 
+    /**
+     * Apply convolution filter to image
+     * @param img input
+     * @param k convolution filter
+     * @return altered image
+     */
     public static BufferedImage convolutionFilter(BufferedImage img, Kernel k){
         // Convert image to grayscale
         BufferedImage original = deepCopyImage(img);
@@ -20,24 +26,12 @@ public class ImageUtilities {
         return tmp;
     }
 
-    public static BufferedImage toGreyscale(BufferedImage img){
-        // Convert image to grayscale
-        BufferedImage tmp = new BufferedImage(
-                img.getWidth(), img.getHeight(),
-                BufferedImage.TYPE_BYTE_INDEXED);
-        Graphics2D g = tmp.createGraphics();
-        g.drawImage(img, 0, 0, null);
-        g.dispose();
-        for (int column = 0; column < img.getHeight(); column++){
-            for (int row = 0; row < img.getWidth(); row++){
-                int newColour = getGreyPixel(new Color(img.getRGB(row, column)));
-                tmp.setRGB(row, column, new Color(newColour,newColour,newColour).getRGB());
-            }
-        }
-        return tmp;
-    }
-
-    private static BufferedImage deepCopyImage(BufferedImage bi) {
+    /**
+     * Create a deep copy of a buffered image
+     * @param bi input image
+     * @return copy
+     */
+    public static BufferedImage deepCopyImage(BufferedImage bi) {
         BufferedImage copyofImage =
                 new BufferedImage(bi.getWidth(), bi.getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics g = copyofImage.createGraphics();
@@ -45,6 +39,11 @@ public class ImageUtilities {
         return copyofImage;
     }
 
+    /**
+     * Get the grey pixel value from colour
+     * @param c
+     * @return
+     */
     public static int getGreyPixel(Color c){
         int newColour = (int)(
                 c.getRed() * 0.299 +
@@ -54,6 +53,14 @@ public class ImageUtilities {
         return newColour;
     }
 
+    /**
+     * Get a two-tone version of the pixel back
+     * @param pixelColor input pixel
+     * @param threshold value
+     * @param foreground colour
+     * @param background colour
+     * @return output colour
+     */
     public static Color getTwoTonePixel(Color pixelColor, int threshold, Color foreground, Color background){
         int greyInt = getGreyPixel(pixelColor);
         if (greyInt > threshold){
@@ -62,6 +69,12 @@ public class ImageUtilities {
             return background;
     }
 
+    /**
+     * Create an array with the number of each luminosity
+     * according to index
+     * @param img
+     * @return
+     */
     public static double[] histogramArray(BufferedImage img) {
         String output = "";
         double histogram[] = new double[256];
@@ -76,6 +89,11 @@ public class ImageUtilities {
         return histogram;
     }
 
+    /**
+     * Get string version of histogram
+     * @param img input image
+     * @return string
+     */
     public static String getHistogram(BufferedImage img) {
         String output = "";
         double histogram[] = new double[256];
@@ -113,10 +131,21 @@ public class ImageUtilities {
         return output;
     }
 
+    /**
+     * print histogram to standard output
+     * @param img
+     */
     public static void printHistogram(BufferedImage img) {
         System.out.println(getHistogram(img));
     }
 
+    /**
+     * Apply contrast/brightness changes to image
+     * @param img input image
+     * @param scaleFactor contrast
+     * @param brightness
+     * @return output img
+     */
     public static BufferedImage contrast(BufferedImage img, float scaleFactor, float brightness) {
         BufferedImage tmp = deepCopyImage(img);
         RescaleOp rescaleOp = new RescaleOp(scaleFactor, brightness, null);

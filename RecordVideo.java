@@ -1,60 +1,60 @@
-import com.xuggle.mediatool.IMediaWriter;
-import com.xuggle.mediatool.ToolFactory;
-import com.xuggle.xuggler.ICodec;
-
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 /**
- * Created by linuskarsai on 28/05/2014.
+ * Created by Linus Karsai (312070209) on 28/05/2014.
  */
 public class RecordVideo {
     private boolean recording = false;
-    private IMediaWriter writer;
-    private long startTime = -1;
+    private GifSequenceWriter writer;
+    private ImageOutputStream output;
 
-    public RecordVideo(int width, int height) {
+    /**
+     * Create GIF from webcam, GifSequenceWriter care of Elliot Kroo
+     */
+    public RecordVideo() {
+    }
+
+    public void start() {
+        // start creating img from GifSequence Writer
         String home = System.getProperty("user.home");
         File dir = new File(home + "/PhotoBooth/");
         DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
         Date date = new Date();
-        writer = ToolFactory.makeWriter(dir + "/" + dateFormat.format(date) + ".gif");
-        writer.addVideoStream(0, 0, ICodec.ID.CODEC_ID_GIF,
-                width, height);
-    }
-
-    public void start() {
-        startTime = System.nanoTime();
+        try {
+            output = new FileImageOutputStream(new File(dir + "/" + dateFormat.format(date) + ".gif"));
+            writer = new GifSequenceWriter(output, 1, 1, true);
+            recording = true;
+        } catch (Exception e) {
+            System.out.println("error creating file..");
+        }
     }
 
     public void addFrame(BufferedImage img) {
-        BufferedImage bgrImg = convertToType(img,
-                BufferedImage.TYPE_3BYTE_BGR);
-        // encode the video
-        writer.encodeVideo(0, bgrImg, System.nanoTime() - startTime,
-                TimeUnit.NANOSECONDS);
+        // add image to writer
+        synchronized (this) {
+            try {
+                writer.writeToSequence(img);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void stop() {
-        writer.close();
-    }
-
-    private BufferedImage convertToType(BufferedImage sourceImage, int targetType) {
-        BufferedImage image;
-        if (sourceImage.getType() == targetType) {
-            image = sourceImage;
-        } else {
-            image = new BufferedImage(
-                    sourceImage.getWidth(),
-                    sourceImage.getHeight(),
-                    targetType
-            );
-            image.getGraphics().drawImage(sourceImage, 0, 0, null);
+        // finish writing
+        synchronized (this) {
+            try {
+                writer.close();
+                output.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return image;
     }
 }

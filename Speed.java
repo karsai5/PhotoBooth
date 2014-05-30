@@ -5,42 +5,47 @@ import java.io.File;
 import java.util.ArrayList;
 
 /**
- * Created by linuskarsai on 28/05/2014.
+ * Created by Linus Karsai (312070209) on 28/05/2014.
  */
 public class Speed implements Filter {
     ArrayList<BufferedImage> previous = new ArrayList<BufferedImage>();
     int count = 0;
-    BufferedImage combined;
     @Override
     public BufferedImage apply(BufferedImage img, Object[] options) {
-        ++count;
-        if (count%5 == 0) {
-            count = 0;
-            previous.add(img);
-        }
-        if (previous.size() > 0) {
-            combined = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-            Graphics g = combined.getGraphics();
-            g.drawImage(img, 0, 0, null);
-            g.drawImage(dropOpacity(previous.get(0)), 0, 0, null);
-            try {
-                ImageIO.write(combined, "PNG", new File("./", "combined.png"));
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (previous.size() >= 3){
+            BufferedImage previousArray[] = new BufferedImage[previous.size()];
+            previous.toArray(previousArray);
+            int opacity = 150;
+            for (int i = 0; i < previousArray.length; ++i) {
+                img = addImages(img,previousArray[i], opacity);
             }
+            previous.remove(0);
         }
+        previous.add(img);
+        ++count;
         return img;
     }
 
-    private BufferedImage dropOpacity(BufferedImage img) {
+    private BufferedImage addImages(BufferedImage base, BufferedImage overlay, int opacity) {
+        BufferedImage combined = new BufferedImage(base.getWidth(), base.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+        Graphics g = combined.getGraphics();
+        g.drawImage(base, 0, 0, null);
+        g.drawImage(dropOpacity(overlay, 100), 0, 0, null);
+
+        return combined;
+    }
+
+    private BufferedImage dropOpacity(BufferedImage img, int opacity) {
+        BufferedImage tmp = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        tmp.getGraphics().drawImage(img, 0, 0, null);
         for (int column = 0; column < img.getHeight(); column++){
             for (int row = 0; row < img.getWidth(); row++){
                 Color c = new Color(img.getRGB(row, column));
                 Color newColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), 120);
-                img.setRGB(row, column, newColor.getRGB());
+                tmp.setRGB(row, column, newColor.getRGB());
             }
         }
-        return img;
+        return tmp;
     }
 }

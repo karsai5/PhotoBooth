@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 
 /**
- * Created by linuskarsai on 28/05/2014.
+ * Created by Linus Karsai (312070209) on 28/05/2014.
  */
 public class Histogram {
     private JFrame canvas = new CanvasFrame("Histogram");
@@ -17,12 +17,22 @@ public class Histogram {
         canvas.setVisible(false);
     }
 
+    /**
+     * If Histogram dialog is visible
+     * draw histogram on it
+     * @param img
+     */
     public void drawHistogram(BufferedImage img) {
         if (canvas.isVisible()) {
             drawHistogram(ImageUtilities.getHistogram(img));
         }
     }
 
+    /**
+     * Get the histogram from ImageUtilities and wrap it
+     * in html
+     * @param s
+     */
     public void drawHistogram(String s) {
         if (canvas.isVisible()) {
             histogramLabel.setText("<html>" + s.replace("\n", "<br>") + "<html>");
