@@ -9,10 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.Buffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -134,7 +131,9 @@ public class PhotoBooth {
             BufferedReader br = null;
             try {
                 String currentLine;
-                br = new BufferedReader(new FileReader("help.html"));
+
+                br = new BufferedReader(
+                        new InputStreamReader(this.getClass().getResourceAsStream("help.html")));
                 while ((currentLine = br.readLine()) != null) {
                     stringBuffer.append(currentLine);
                 }
